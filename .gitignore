@@ -30,6 +30,9 @@ Desktop.ini
 *.log
 npm-debug.log*
 
+# Copyrighted course materials (do not commit original articles)
+**/article-origin/
+
 # Cache
 .cache/
 __pycache__/

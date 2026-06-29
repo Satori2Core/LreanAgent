@@ -33,9 +33,6 @@ npm-debug.log*
 # Copyrighted course materials (do not commit original articles)
 **/article-origin/
 
-# GeekTime auth (cookies expire, do not commit)
-.geektime-cookies
-
 # Cache
 .cache/
 __pycache__/

@@ -33,6 +33,7 @@
 | 002 | [01 登台远望：Claude Code 底层技术全景导览](./002-底层技术全景/) | ✅ 已学习 |
 | 003 | [02 过目不忘：Claude Code 记忆系统与 CLAUDE.md](./003-CLAUDE-md记忆系统/) | ✅ 已学习 |
 | 004 | [03 分而治之：Sub-Agents 的核心概念与应用价值](./004-SubAgents核心概念/) | ✅ 已学习 |
+| 005 | [04 登堂入室：从 Sub-Agents 到 Multi-Agent 的工程指南](./005-Multi-Agent工程指南/) | ✅ 已学习 |
 
 ---
 

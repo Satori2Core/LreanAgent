@@ -358,5 +358,6 @@ Glob                   Glob                  Edit
 ## 相关链接
 
 - 📁 [原文原始数据](../article-origin/004/)
+- 🛠 [实践：用 Sub-Agent 搭建学习笔记自动化流水线](./practice-subagent-workflow.md)
 - 📦 [课程 GitHub - 03-SubAgents 示例](https://github.com/huangjia2019/claude-code-engingeering)
 - 🔗 [OpenClaw](https://github.com/openclaw/openclaw)

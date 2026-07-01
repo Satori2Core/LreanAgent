@@ -121,6 +121,8 @@ You are a senior code reviewer...
 | `model` | sonnet | 审查需要较强分析力，haiku 可能漏问题，opus 太贵 |
 | `description` | 含 "Proactively" | 告诉 Claude 可以主动在代码修改后自动调用 |
 
+![工具表](../images/006-只读型agent/001-工具表.png)
+
 > 💡 注意 tools 里有 Bash（用于 `git diff` 等只读操作），但没有 Edit/Write。Bash 不等于写权限——它是为了读取变更内容。
 
 ---
@@ -190,6 +192,8 @@ Skill   提供：领域知识（链路拓扑、SLA、历史事故）
 | prompt 里写「请参考 doc/chain.md」 | 子代理需要自己去找文件、读文件、理解内容，不确定它会不会做 |
 | `skills: [chain-knowledge]` | 知识在启动时已经注入上下文，子代理一定能用 |
 
+![subagent-skills](../images/006-只读型agent/002-subagent-skill.png)
+
 > 💡 这就是正文里反复强调的：**知识注入是系统级的（不依赖 prompt 提示），分析能力是工具级的（受 tools 和 permissionMode 约束）**。
 
 ---
@@ -204,7 +208,18 @@ Skill   提供：领域知识（链路拓扑、SLA、历史事故）
 | 反复使用的标准化流程 | |
 | 多个工具需要组合 | |
 
+![subagent创建决策](../images/006-只读型agent/003-subagent-create-opt.png)
+
 黄佳老师自己的例子：训练大模型时，初期日志分析在主对话做。后来日志越来越多，上下文被淹没了，才反推出「需要一个专门的日志分析 SubAgent」。**决策是动态的，不是一开始就知道。**
+
+**判断信号**
+
+![判断信号](../images/006-只读型agent/004-subagent-signal.png)
+
+**不该创建子代理的场景**
+- 一次性任务：直接在主对话中完成即可。
+- 简单的 prompt 模板：直接用 Skill 文件，不需要独立上下文和工具隔离。
+- 自动化触发动作：用 Hook，不需要 AI 分析判断。
 
 ---
 
@@ -256,3 +271,50 @@ skills: [chain-knowledge, recent-incidents]
 
 - 📁 [原文原始数据](../article-origin/006/)
 - 📦 [课程 GitHub - 03-SubAgents 实战项目](https://github.com/huangjia2019/claude-code-engingeering)
+
+---
+
+## 评论区高价值讨论
+
+### 🔥 1. 真实事故：跨系统漏改——SubAgent + Skill 的组合解法
+
+**读者 拾掇拾掇（12 赞）**：最近一个线上场景，在原有功能上迭代涉及多个系统，爆了一个 bug——有一个系统的接口漏改了。感觉 SubAgent 也发现不了这种「隐蔽功能点」。
+
+**作者答**（精华）：
+- SubAgent 是**执行力**，Skill 知识库是**视野**。没有视野的执行力只能在已知范围内打转，发现不了「不知道自己不知道」的盲区
+- 具体解法：① 建 `system-dependency` Skill 记录依赖关系 + 隐蔽功能点 ② 建 `impact-checker` SubAgent 预加载依赖知识 ③ 关键是持续维护——每次爆 bug 都是更新知识库的最佳时机
+
+> 💡 **一句话**：**先建地图（Skill），再派员检查（SubAgent）。** 这正好印证正文的 SubAgent + Skill 组合模式。
+
+---
+
+### 🔥 2. Java 调用链分析：三种进化方案
+
+**读者 和尚（11 赞）**：Java 开发中改动方法 A，评估了链路 1（方法一→方法A），遗漏了链路 2（方法二→方法A），线上出问题。即便 CLAUDE.md 里写了「要充分考虑上下游全链路」，依然会出错。
+
+**读者给出的三个方案进化**：
+1. 从「字符串搜索」升级为「结构分析」（用 AST/LSP 做调用图）
+2. 从「结构分析」升级为「契约变更分析」（检测方法签名/语义变化）
+3. 从「契约分析」升级为「架构隔离设计」
+
+**作者答**：这三个进化本质是深刻的——从「字符串搜索」到「架构隔离」，每一级的视角都在提升。
+
+---
+
+### 🔥 3. Skills 字段的注入机制（重要技术细节）
+
+**读者 jssfy（8 赞）**：`impact-analyzer` 子代理的 skill 是怎么被触发注入到上下文的？
+
+**作者答**（澄清了一个重要差异）：
+- **子代理的 `skills` 字段** ≠ **主对话的渐进式加载**
+- 子代理的 skills 是**启动时直接把全文灌进去**——知识已经在子代理的「脑子」里了
+- 主对话的 Skill 是渐进式：先只看 description，触发后才加载全文
+
+> 💡 这个区别很关键——子代理不需要在执行过程中「发现」和「加载」Skill，它在启动前就带着全部知识了。
+
+---
+
+### 🔥 4. 其他碎片
+
+- **Agent Teams 加餐**（grok，9 赞）：作者承诺近期加餐 Agent Teams 实战（`code.claude.com/docs/en/agent-teams`）
+- **「似懂非懂」的学习过程很珍贵**（Geek_75c01f，9 赞）：在 Vibe Coding 时代，AI 出答案、人类以为是自己的——那种「不懂到懂」的思维摩擦反而是稀缺品

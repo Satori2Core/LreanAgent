@@ -261,6 +261,6 @@ SubAgents  → 需要独立上下文的任务            → 隔离执行
 
 ## 相关链接
 
-- 📁 [原文原始数据](../../../article-origin/011/)
+- 📁 [原文原始数据](../article-origin/011/)
 - 📖 [Anthropic Agent Skills 公用仓库](https://github.com/anthropics/skills)
-- 📝 [SubAgent 专题索引](../../subagent/)
+- 📝 [阅读指南](../000-阅读指南/)

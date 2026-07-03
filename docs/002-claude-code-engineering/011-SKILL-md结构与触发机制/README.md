@@ -55,7 +55,11 @@
 - CLAUDE.md = 企业文化与通用规章
 - **Skills = 标准操作程序（SOP）**
 
+![SKILL与企业SOP](../images/011-skill-md结构与触发机制/001-SKILL与企业SOP.png)
+
 一个成熟企业不会要求员工背诵全部操作手册，而是在具体任务发生时按需查阅 SOP。新员工做代码审查时，参考《代码审查 SOP》，按步骤检查，输出符合模板的报告。Claude 加载 code-review Skill 时做的事情完全一样。
+
+对于企业来说，**把专业流程、领域知识和行动判断封装成可复用的能力单元，然后让智能体按需加载和调用，这是一种让通用模型具备专业化、按需调用能力的通用设计模式。**
 
 > 💡 **Skills 的真正意义**：组织的「做事方式」第一次在 Agent 系统中获得了结构化存在的形式。经验不再依附于老员工的记忆，而变成模型可以理解、选择和继承的结构。
 
@@ -73,7 +77,7 @@
 
 ---
 
-### 五、两种触发方式
+### 五、理解两种触发方式
 
 ```
 方式一：用户手动 /skill-name     → 100% 确定触发
@@ -81,6 +85,15 @@
 ```
 
 **description 是 Skill 的灵魂**——它不是给人看的文档，而是给 Claude 看的触发器。Claude 选择是否激活一个 Skill，完全依赖语义理解 description。
+
+Skills 的触发机制靠 LLM 语义推理，而非精确匹配。Claude 读取所有 Skills 的 description，通过语义理解判断当前对话是否匹配某个 Skill。
+
+![SKILL触发机制](../images/011-skill-md结构与触发机制/002-SKILL触发机制.png)
+
+当用户请求可能匹配多个 Skills 时，Claude 会：
+1. 评估每个 Skill 的 description 与用户请求的相关性。
+2. 选择最相关的那个。
+3. 如果不确定，可能会询问用户或使用通用方式处理。
 
 如果想禁止 Claude 自动触发某个 Skill（比如危险操作），用 `disable-model-invocation: true`——此时 description 甚至不会加载到上下文，Claude 完全看不见它，只有用户手动 `/name` 才能触发。
 
